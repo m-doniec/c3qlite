@@ -9,7 +9,7 @@ def Callback = fn int(void* whatever, int argc, ZString* argv, ZString* azColNam
 def SqliteDb = void*;
 
 fn int callback(void* whatever, int argc, ZString* argv, ZString* azColName)
- {
+{
    int i;
    for(i = 0; i<argc; i++) {
       io::printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : (ZString)"NULL");
@@ -22,7 +22,7 @@ fn void main()
 {
     io::printn("Hello, world!");
     SqliteDb db;
-    int res = sqliteOpen("c:\\sh\\c3\\hello_world.db", &db);
+    int res = sqliteOpen("c:\\gitsNon\\c3qlite\\output\\hello_world.db", &db);
     io::printfn("!!! DB OPENING RESULT: %d !!!", res);
 
     ZString errmsg;
