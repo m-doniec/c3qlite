@@ -41,7 +41,7 @@ fn int callback(void* whatever, int argc, ZString* argv, ZString* azColName)
       }
       else if(libc::strcmp(azColName[i], (ZString)"SALARY") == 0) {
          //io::printfn("!!! SALARY: %s !!!", argv[i]);
-         emp.salary = libc::atof(argv[i]);
+         emp.salary = argv[i] ? libc::atof(argv[i]) : -1;
       }
       //io::printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : (ZString)"NULL");
    }
@@ -76,7 +76,7 @@ fn int callback2(void* whatever, int argc, ZString* argv, ZString* azColName)
       }
       else if(libc::strcmp(azColName[i], (ZString)"SALARY") == 0) {
          //io::printfn("!!! SALARY: %s !!!", argv[i]);
-         emp.salary = libc::atof(argv[i]);
+         emp.salary = argv[i] ? libc::atof(argv[i]) : -1;
       }
       //io::printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : (ZString)"NULL");
    }
@@ -111,9 +111,9 @@ fn void main()
     //c3qlite::sqliteExec(db, sql, null, null, &errmsg);
     //io::printfn("!!! EXECUTION RETURNED AN ERROR: %s !!!", errmsg);
 
-   //  sql = "INSERT INTO COMPANY (NAME,AGE,ADDRESS,SALARY) VALUES ('Paul', 32, 'California', 20000.00 ); ";
-   //  c3qlite::sqliteExec(db, sql, null, null, &errmsg);
-   //  io::printfn("!!! EXECUTION RETURNED AN ERROR: %s !!!", errmsg);
+   sql = "INSERT INTO COMPANY (NAME,AGE,ADDRESS,SALARY) VALUES ('Maciej', 32, 'Silesia', NULL ); ";
+   c3qlite::sqliteExec(db, sql, null, null, &errmsg);
+   io::printfn("!!! EXECUTION RETURNED AN ERROR: %s !!!", errmsg);
 
     sql = "SELECT * FROM COMPANY;";
    //  Employee* emp = mem::new(Employee);
@@ -130,8 +130,8 @@ fn void main()
 
    int j = 0;
    foreach(emp2: employees){
-   io::printfn("name: %s, age: %d, address: %s, salary: %s", emp2.name, emp2.age, emp2.address, emp2.salary);
-   j++;
+      io::printfn("name: %s, age: %d, address: %s, salary: %s", emp2.name, emp2.age, emp2.address, emp2.salary);
+      j++;
    }
 
    io::printfn("!!! EMPLOYEES LIST COUNT: %d !!!", j);
