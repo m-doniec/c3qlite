@@ -1,15 +1,58 @@
 module hello_world;
 import std::io;
+import libc;
 import c3qlite;
+
+struct Employee{
+   String nameStr;
+   ZString name;
+   ZString age;
+   ZString address;
+   ZString salary;
+}
 
 fn int callback(void* whatever, int argc, ZString* argv, ZString* azColName)
 {
    int i;
-   for(i = 0; i<argc; i++) {
-      io::printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : (ZString)"NULL");
+   //io::printfn("!!! NAME: %s !!!", ((Employee*)whatever).name);
+
+   Employee* emp;
+   if(whatever != null)
+   {
+      emp = (Employee*)whatever;
    }
-   io:: printf("\n");
+
+   for(i = 0; i<argc; i++) {
+      //io::printfn("AZCOLNAME: %s", azColName[i]);
+
+      if(libc::strcmp(azColName[i], (ZString)"NAME") == 0) {
+         //io::printfn("!!! NAME: %s !!!", argv[i]);
+         //libc::s(emp.name, argv[i], ZString.len(argv[i]));
+         emp.name = String.zstr_copy(ZString.str_view(argv[i]));// (ZString)"\0";
+      }
+      else if(libc::strcmp(azColName[i], (ZString)"AGE") == 0) {
+         //io::printfn("!!! AGE: %s !!!", argv[i]);
+         emp.age = String.zstr_copy(ZString.str_view(argv[i]));
+      }
+      else if(libc::strcmp(azColName[i], (ZString)"ADDRESS") == 0) {
+         //io::printfn("!!! ADDRESS: %s !!!", argv[i]);
+         emp.address = String.zstr_copy(ZString.str_view(argv[i]));
+      }
+      else if(libc::strcmp(azColName[i], (ZString)"SALARY") == 0) {
+         //io::printfn("!!! SALARY: %s !!!", argv[i]);
+         emp.salary = String.zstr_copy(ZString.str_view(argv[i]));
+      }
+      //io::printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : (ZString)"NULL");
+   }
+   //io::printfn("name: %s, age: %s, address: %s, salary: %s", emp.name, emp.age, emp.address, emp.salary);
+   //io::printn(&emp.name);
+   //io:: printf("\n ===================================== \n");
    return 0;
+}
+
+fn void setName(Employee* emp, ZString name)
+{
+   emp.name = name;
 }
 
 fn void main()
@@ -26,17 +69,27 @@ fn void main()
     " ADDRESS        CHAR(50),"
     " SALARY         REAL, SALARY3         REAL );";
     
-    io::printn(sql);
-    c3qlite::sqliteExec(db, sql, &callback, null, &errmsg);
-    io::printfn("!!! EXECUTION RETURNED AN ERROR: %s !!!", errmsg);
+   //io::printn(sql);
+    //c3qlite::sqliteExec(db, sql, null, null, &errmsg);
+    //io::printfn("!!! EXECUTION RETURNED AN ERROR: %s !!!", errmsg);
 
-    sql = "INSERT INTO COMPANY (NAME,AGE,ADDRESS,SALARY) VALUES ('Paul', 32, 'California', 20000.00 ); ";
-    c3qlite::sqliteExec(db, sql, &callback, null, &errmsg);
-    io::printfn("!!! EXECUTION RETURNED AN ERROR: %s !!!", errmsg);
+   //  sql = "INSERT INTO COMPANY (NAME,AGE,ADDRESS,SALARY) VALUES ('Paul', 32, 'California', 20000.00 ); ";
+   //  c3qlite::sqliteExec(db, sql, null, null, &errmsg);
+   //  io::printfn("!!! EXECUTION RETURNED AN ERROR: %s !!!", errmsg);
 
     sql = "SELECT * FROM COMPANY;";
-    c3qlite::sqliteExec(db, sql, &callback, null, &errmsg);
+    Employee* emp = mem::new(Employee);
+    emp.name = (ZString)"xd";
+    io::printn(emp.name);
 
-    io::printfn("!!! EXECUTION RETURNED AN ERROR: %s !!!", errmsg);
+    c3qlite::sqliteExec(db, sql, &callback, emp, &errmsg);
+
+   io::printfn("name: %s, age: %s, address: %s, salary: %s", emp.name, emp.age, emp.address, emp.salary);
+
+
+    //io::printfn("!!! EXECUTION RETURNED AN ERROR: %s !!!", errmsg);
     c3qlite::sqliteClose(db);
+    //0x788899fc78
+
+
 }
