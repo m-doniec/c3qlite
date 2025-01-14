@@ -6,9 +6,9 @@ import c3qlite;
 struct Employee{
    String nameStr;
    ZString name;
-   ZString age;
+   int age;
    ZString address;
-   ZString salary;
+   double salary;
 }
 
 fn int callback(void* whatever, int argc, ZString* argv, ZString* azColName)
@@ -32,7 +32,7 @@ fn int callback(void* whatever, int argc, ZString* argv, ZString* azColName)
       }
       else if(libc::strcmp(azColName[i], (ZString)"AGE") == 0) {
          //io::printfn("!!! AGE: %s !!!", argv[i]);
-         emp.age = String.zstr_copy(ZString.str_view(argv[i]));
+         emp.age = libc::atoi(argv[i]);
       }
       else if(libc::strcmp(azColName[i], (ZString)"ADDRESS") == 0) {
          //io::printfn("!!! ADDRESS: %s !!!", argv[i]);
@@ -40,11 +40,11 @@ fn int callback(void* whatever, int argc, ZString* argv, ZString* azColName)
       }
       else if(libc::strcmp(azColName[i], (ZString)"SALARY") == 0) {
          //io::printfn("!!! SALARY: %s !!!", argv[i]);
-         emp.salary = String.zstr_copy(ZString.str_view(argv[i]));
+         emp.salary = libc::atof(argv[i]);
       }
       //io::printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : (ZString)"NULL");
    }
-   //io::printfn("name: %s, age: %s, address: %s, salary: %s", emp.name, emp.age, emp.address, emp.salary);
+   //io::printfn("name: %s, age: %s, address: %s, salary: %s", emp.name, emp.age, emp.address, ep.salary);
    //io::printn(&emp.name);
    //io:: printf("\n ===================================== \n");
    return 0;
@@ -84,7 +84,7 @@ fn void main()
 
     c3qlite::sqliteExec(db, sql, &callback, emp, &errmsg);
 
-   io::printfn("name: %s, age: %s, address: %s, salary: %s", emp.name, emp.age, emp.address, emp.salary);
+   io::printfn("name: %s, age: %d, address: %s, salary: %s", emp.name, emp.age, emp.address, emp.salary);
 
 
     //io::printfn("!!! EXECUTION RETURNED AN ERROR: %s !!!", errmsg);
