@@ -88,17 +88,28 @@ fn int callback2(void* whatever, int argc, ZString* argv, ZString* azColName)
    return 0;
 }
 
-fn void setName(Employee* emp, ZString name)
-{
-   emp.name = name;
-}
-
 fn void main()
 {
     io::printn("Hello, world!");
     SqliteDb db;
     int res = c3qlite::sqliteOpen("c:\\gitsNon\\c3qlite\\output\\hello_world.db", &db);
     io::printfn("!!! DB OPENING RESULT: %d !!!", res);
+
+    libc::system("git branch --show-current > c:\\gitsNon\\c3qlite\\output\\branch.txt");
+   
+   //  char[] buffer = mem::new_array(char, 100);
+   //  defer free(buffer); // Free memory on scope exit
+   
+    String resbuffer = read_file("c:\\gitsNon\\c3qlite\\output\\branch.txt")!!;
+
+   
+   io::printfn("!!! FILE CONTENT: %s!!!", resbuffer);
+
+   // File file = file::open("c:\\gitsNon\\c3qlite\\output\\branch.txt", "r")!!;
+   // defer (void)file.close();
+   // String! line = io::readline(libc::fopen("c:\\gitsNon\\c3qlite\\output\\branch.txt", "r"));
+
+   // io::printfn("!!! FILE CONTENT WITH READLINE: %s %d!!!", line, line.len());
 
     ZString errmsg;
     ZString sql = "CREATE TABLE COMPANY("
@@ -141,4 +152,25 @@ fn void main()
     //0x788899fc78
 
 
+}
+
+fn String! read_file(String filename)
+{
+    // Return Excuse if opening a file failed, using Rethrow `!`
+    File file = file::open(filename, "r")!;
+    // At scope exit, close the file.
+    // Discard the Excuse from file.close() with (void) cast
+    defer (void)file.close();
+
+    char[] buffer = mem::new_array(char, 100);
+    defer free(buffer);
+    
+
+    // Return Excuse if reading failed, using Rethrow `!`
+    usz siz = file.read(buffer)!;
+    io::printfn("!!! FILE SIZE: %d !!!", siz);
+    //return buffer; // return a buffer result
+    String final = (String)mem::new_array(char, siz);
+   libc::memcpy(final, buffer, siz);
+    return final;
 }
